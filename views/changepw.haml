@@ -1,0 +1,16 @@
+%p Hi #{@user}!  I hear you'd like to change you password.
+%form{:action => "/changepw", :method => "post"}
+  %p
+  %label current password: 
+  %input{:type => "password", :name => "current", :length => 15, :size => 15}
+  %p
+  %label new password:
+  %input{:type => "password", :name => "new", :length => 15, :size => 15}
+  %p
+  %label new password (one more time):
+  %input{:type => "password", :name => "new_sanity", :length => 15, :size => 15}
+  %p
+  %input{:type => "submit", :value => "Change it!"}
+  
+  
+

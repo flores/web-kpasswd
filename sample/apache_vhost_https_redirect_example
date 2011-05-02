@@ -1,0 +1,6 @@
+<VirtualHost 1.2.3.4:80>
+        ServerName  someserver.somedomain.com
+        ServerAdmin somedude@somedomain.com
+	RewriteEngine On
+        RewriteRule ^/(.*) https://%{SERVER_NAME}/$1 [L,R]
+</VirtualHost>

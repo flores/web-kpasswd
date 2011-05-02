@@ -1,0 +1,28 @@
+<VirtualHost 1.2.3.4:443>
+	ServerName  someserver.somedomain.com
+        ServerAdmin somedude@somedomain.com
+	SSLProxyEngine On
+	SSLEngine On
+        SSLCertificateFile      /path/to/my.crt
+        SSLCertificateChainFile /path/to/my/chain.crt
+	SSLCertificateKeyFile   /path/to/my.key
+
+        <Location "/">
+	        ProxyPass http://localhost:4567/
+        	ProxyPassReverse http://localhost:4567/
+		AuthType Kerberos
+		AuthName "Kerberos Login"
+		KrbAuthRealms MYREALM
+		Krb5Keytab /etc/apache2/http.keytab
+		KrbMethodNegotiate on
+		KrbMethodK5Passwd on
+		KrbAuthoritative on
+		KrbVerifyKDC off
+		KrbLocalUserMapping on
+		require valid-user
+		Options FollowSymLinks MultiViews +ExecCGI
+		Order allow,deny
+		allow from all
+        </Location>
+</VirtualHost>
+
