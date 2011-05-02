@@ -6,6 +6,8 @@ require 'rack'
 require 'haml'
 require 'base64'
 
+# If the user has authenticated via Kerberos 5 on the frontend server, 
+# this header is coming over
 def authenticate()
 	user_env = @env["Authorization"] || @env["HTTP_AUTHORIZATION"]
         if user_env
@@ -43,7 +45,8 @@ post '/changepw' do
 	currentpass	= params["current"]
 	newpass		= params["new"]
 	newpass_sanity	= params["new_sanity"]
-	buffer		= ""
+
+	# basic checks
 	if newpass != newpass_sanity
 		haml :passwords_do_not_match
 	elsif newpass == currentpass
@@ -57,11 +60,10 @@ post '/changepw' do
 		# spawn a child process (fork)
 		PTY.spawn("/usr/bin/kpasswd #{@user}") do |output, input, pid|
 		   input.sync = true
-
-		   #set the expect verbosity flag to false or you will get output from expect
    		   expect_verbose = false
 
-   		   #expect the username prompt and return the username
+   		   # kpasswd will return the realm name, so let's just regex 
+		   # for the bit we care about.
    		   output.expect(/Password for #{@user}/) do
       			input.puts(currentpass)
    		   end
@@ -74,9 +76,12 @@ post '/changepw' do
      			input.puts(newpass)
    		   end
 
+		   # might not actually be an error.  We're returning the output
+		   # success will be "Password changed"
        		   @error=output.read
 		
 		end
+		# then we just display it on a page with a back button.
 		haml :kpasswd_results
 	end
 end	
