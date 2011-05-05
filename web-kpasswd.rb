@@ -26,7 +26,7 @@ get '/' do
 end
 
 get '/unauthenticated' do
-	"Unfortunately we could not authenticate you.  Please contact IT/Ops!"
+	haml :unauthenticated
 end
 
 get '/changepw' do
@@ -51,6 +51,9 @@ post '/changepw' do
 		haml :passwords_do_not_match
 	elsif newpass == currentpass
 		haml :password_did_not_change
+	# weak exploit prevention
+	elsif ( currentpass.length || newpass.length ) > 64
+		haml :password_too_long
 	else
 		require 'pty'    
 		require 'expect'
